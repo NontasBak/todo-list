@@ -52,6 +52,27 @@ body {
     font-size: 1.5rem;
 }
 
+.container li,
+.projectList li {
+    padding: 0.5rem;
+}
+
+.container li:hover,
+.projectList li:hover {
+    cursor: pointer;
+    background-color: rgb(201, 201, 201);
+    border-radius: 0.3rem;
+}
+
+.active {
+    background-color: rgb(201, 201, 201);
+    border-radius: 0.3rem;
+}
+
+.active::before {
+    content: "→ ";
+}
+
 /* 
  *  MAIN
 */
@@ -61,34 +82,112 @@ body {
     height: 100vh;
 }
 
-.main > h3 {
+.main > .title {
     padding: 3rem;
+    padding-bottom: 2rem;
     font-size: 2.5rem;
     color: rgb(243, 61, 0);
     font-weight: 500;
 }
 
-.todo {
+.title > h3 {
+    padding-bottom: 0.7rem;
+    border-bottom: 3px solid rgb(243, 61, 0);;
+}
+
+.todos {
+    padding: 0 3rem;
+
     display: flex;
+    flex-direction: column;
     gap: 1rem;
 }
 
-.container li,
-.projectList {
-    padding: 0.5rem;
+.todo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    font-size: 2rem;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
+
+    transition: all 0.5s ease;
 }
 
-.container li:hover,
-.projectList:hover {
+.todo:hover {
+    background-color: rgb(239, 239, 239);
     cursor: pointer;
-    background-color: rgb(201, 201, 201);
-    border-radius: 0.3rem;
 }
 
-.active {
-    background-color: rgb(201, 201, 201);
+.dueDate {
+    margin-left: auto;
 }
 
-.active::before {
-    content: "→ ";
+.checkbox {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+
+    font: inherit;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.1em solid;
+    border-radius: 0.6em;
+
+    display: grid;
+    place-content: center;
+}
+
+.checkbox::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 0.6em;
+    transform: scale(0);
+    box-shadow: inset 1em 1em black;
+
+    transform-origin: bottom left;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.checkbox:checked::before {
+    transform: scale(1);
+}
+
+.low {
+    border-color: rgb(0, 184, 0);
+    background-color: rgb(186, 238, 186);
+}
+
+.medium {
+    border-color: rgb(204, 204, 0);
+    background-color: rgb(240, 240, 192);
+}
+
+.high {
+    border-color: red;
+    background-color: rgb(249, 205, 205);
+}
+
+.checkbox:hover {
+    filter: brightness(0.9);
+    cursor: pointer;
+}
+
+.arrow,
+.trash {
+    height: 1.4lh;
+    filter: invert(39%) sepia(0%) saturate(1%) hue-rotate(48deg) brightness(94%)
+        contrast(87%);
+    scale: 0.8;
+}
+
+.details {
+    width: 100%;
+
+    transition: all 0.5s ease;
 }
