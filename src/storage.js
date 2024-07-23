@@ -18,7 +18,8 @@ class Storage {
                 todo.title,
                 todo.description,
                 new Date(todo._dueDate),
-                todo._priority
+                todo._priority,
+                todo.complete
             );
         });
         return todos;

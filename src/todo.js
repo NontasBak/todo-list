@@ -1,10 +1,10 @@
 class Todo {
-    constructor(title, description, dueDate, priority) {
+    constructor(title, description, dueDate, priority, complete = false) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
         this.priority = priority;
-        this.complete = false;
+        this.complete = complete;
     }
 
     switchComplete() {

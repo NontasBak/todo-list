@@ -27,16 +27,14 @@ display.updateMainScreen();
 const sidebarButtons = document.querySelectorAll(".button-sidebar");
 sidebarButtons.forEach((button) => {
     button.addEventListener("click", (e) => {
-        display.updateActiveButton(e);
+        display.updateActiveProject(e);
         display.updateMainScreen(e.target.textContent);
     });
 });
 
 const todos = document.querySelectorAll(".todo");
 todos.forEach((todo) => {
-    todo.addEventListener("click", (e) => {
-        display.toggleTodoDetails(e.target);
-    });
+    todo.addEventListener("click", display.todoInputHandler);
 });
 
 // console.log(JSON.stringify(todo1));
