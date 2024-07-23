@@ -128,7 +128,19 @@ class Display {
         Storage.populate(projectList, todos);
     };
 
-    deleteTodo = (todo) => {};
+    deleteTodo = (todo) => {
+        let todos = Storage.todos();
+        todos = todos.filter(
+            (td) =>
+                td.title !==
+                todo.parentElement.querySelector(".title").textContent
+        );
+
+        //Might need refactoring
+        let projectList = Storage.projectList();
+        Storage.populate(projectList, todos);
+        this.updateMainScreen();
+    };
 
     todoInputHandler = (e) => {
         if (e.target.classList.contains("checkbox")) {
