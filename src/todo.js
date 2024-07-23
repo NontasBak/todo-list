@@ -12,16 +12,20 @@ class Todo {
     }
 
     set priority(priority) {
-        if (
-            priority !== "LOW" &&
-            priority !== "MEDIUM" &&
-            priority !== "HIGH"
-        ) {
-            console.error("Invalid priority");
-            return;
-        }
+        // if (
+        //     priority !== "LOW" &&
+        //     priority !== "MEDIUM" &&
+        //     priority !== "HIGH"
+        // ) {
+        //     console.error("Invalid priority");
+        //     return;
+        // }
 
         this._priority = priority;
+    }
+
+    get priority() {
+        return this._priority;
     }
 
     set dueDate(dueDate) {
@@ -31,6 +35,10 @@ class Todo {
         }
 
         this._dueDate = dueDate;
+    }
+
+    get dueDate() {
+        return this._dueDate;
     }
 }
 
