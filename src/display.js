@@ -1,6 +1,7 @@
 import Storage from "./storage.js";
 import Arrow from "./icons/arrow-down.svg";
 import Trash from "./icons/trash.svg";
+import Plus from "./icons/plus.svg";
 
 class Display {
     updateSidebarProjects = () => {
@@ -19,6 +20,8 @@ class Display {
     };
 
     updateMainScreen = (list = "All Projects") => {
+        this.showAddTodoButton();
+
         let todos = Storage.todos();
         const todosDOM = document.querySelector(".todos");
         todosDOM.innerHTML = "";
@@ -150,6 +153,114 @@ class Display {
         } else {
             this.toggleTodoDetails(e.target);
         }
+    };
+
+    showAddTodoButton = () => {
+        const addTodoElement = document.querySelector(".add-todo");
+        addTodoElement.innerHTML = "";
+        addTodoElement.classList.remove("active");
+        const addTodoH5 = document.createElement("h5");
+        addTodoH5.textContent = "Add Todo";
+
+        const plus = document.createElement("img");
+        plus.classList.add("plus-sign");
+        plus.setAttribute("src", Plus);
+
+        addTodoElement.append(addTodoH5, plus);
+        addTodoElement.addEventListener("click", this.addTodoHandler);
+    }
+
+    addTodoHandler = (e) => {
+        const addTodoElement = document.querySelector(".add-todo");
+        addTodoElement.classList.toggle("active");
+        addTodoElement.removeEventListener("click", this.addTodoHandler);
+
+        if (!addTodoElement.classList.contains("active")) {
+            this.showAddTodoButton();
+            return;
+        }
+
+        addTodoElement.innerHTML = "";
+
+        const form = document.createElement("form");
+        form.id = "new-todo-form";
+
+        const titleInput = document.createElement("input");
+        titleInput.id = "new-todo-title";
+        titleInput.type = "text";
+        const titleInputLabel = document.createElement("label");
+        titleInputLabel.textContent = "Title";
+        titleInputLabel.for = "new-todo-title";
+
+        const descriptionInput = document.createElement("input");
+        descriptionInput.id = "new-todo-description";
+        descriptionInput.type = "text";
+        const descriptionInputLabel = document.createElement("label");
+        descriptionInputLabel.textContent = "Description";
+        descriptionInputLabel.for = "new-todo-description";
+
+        const dueDateInput = document.createElement("input");
+        dueDateInput.type = "date";
+        dueDateInput.id = "new-todo-due-date";
+        function toDateInputValue(dateObject) {
+            const local = new Date(dateObject);
+            local.setMinutes(
+                dateObject.getMinutes() - dateObject.getTimezoneOffset()
+            );
+            return local.toJSON().slice(0, 10);
+        }
+        dueDateInput.value = toDateInputValue(new Date());
+        const dueDateInputLabel = document.createElement("label");
+        dueDateInputLabel.textContent = "Due Date";
+        dueDateInputLabel.for = "new-todo-due-date";
+
+        const priorityRadioButtonsDiv = document.createElement("div");
+        priorityRadioButtonsDiv.classList.add("priority-radio-buttons");
+        const lowPriority = document.createElement("input");
+        lowPriority.id = "low";
+        lowPriority.type = "radio";
+        lowPriority.name = "priority";
+        lowPriority.value = "LOW";
+        const mediumPriority = document.createElement("input");
+        mediumPriority.id = "medium";
+        mediumPriority.type = "radio";
+        mediumPriority.name = "priority";
+        mediumPriority.value = "MEDIUM";
+        const highPriority = document.createElement("input");
+        highPriority.id = "high";
+        highPriority.type = "radio";
+        highPriority.name = "priority";
+        highPriority.value = "HIGH";
+
+        const lowPriorityLabel = document.createElement("label");
+        lowPriorityLabel.textContent = "Low";
+        lowPriority.for = "low";
+        const mediumPriorityLabel = document.createElement("label");
+        mediumPriorityLabel.textContent = "Medium";
+        mediumPriority.for = "medium";
+        const highPriorityLabel = document.createElement("label");
+        highPriorityLabel.textContent = "High";
+        highPriority.for = "high";
+        
+
+        priorityRadioButtonsDiv.append(
+            lowPriority,
+            lowPriorityLabel,
+            mediumPriority,
+            mediumPriorityLabel,
+            highPriority,
+            highPriorityLabel
+        );
+        form.append(
+            titleInputLabel,
+            titleInput,
+            descriptionInputLabel,
+            descriptionInput,
+            dueDateInputLabel,
+            dueDateInput,
+            priorityRadioButtonsDiv
+        );
+        addTodoElement.appendChild(form);
     };
 }
 

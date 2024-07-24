@@ -32,6 +32,9 @@ sidebarButtons.forEach((button) => {
     });
 });
 
+const addTodoButton = document.querySelector(".add-todo");
+addTodoButton.addEventListener("click", display.addTodoHandler);
+
 const todos = document.querySelectorAll(".todo");
 todos.forEach((todo) => {
     todo.addEventListener("click", display.todoInputHandler);

@@ -64,12 +64,12 @@ body {
     border-radius: 0.3rem;
 }
 
-.active {
+.sidebar .active {
     background-color: rgb(201, 201, 201);
     border-radius: 0.3rem;
 }
 
-.active::before {
+.sidebar .active::before {
     content: "→ ";
 }
 
@@ -80,10 +80,14 @@ body {
 .main {
     width: 70vw;
     height: 100vh;
+    padding: 3rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .main > .title {
-    padding: 3rem;
     padding-bottom: 2rem;
     font-size: 2.5rem;
     color: rgb(243, 61, 0);
@@ -92,12 +96,65 @@ body {
 
 .title > h3 {
     padding-bottom: 0.7rem;
-    border-bottom: 3px solid rgb(243, 61, 0);;
+    border-bottom: 3px solid rgb(243, 61, 0);
+}
+
+.add-todo {
+    width: 30%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 1.5rem;
+    border: 3px solid rgb(79, 79, 79);
+    border-radius: 0.5rem;
+    padding: 0.6rem;
+
+    transition: all 0.3s ease;
+}
+
+.add-todo.active {
+    width: max(50%, 300px);
+}
+
+#new-todo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+form {
+    width: 100%;
+}
+
+#new-todo-form input[type="text"],
+#new-todo-form input[type="date"] {
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    border: 2px solid rgb(79, 79, 79);
+    border-radius: 0.5rem;
+    width: 80%;
+}
+
+#new-todo-form label {
+    font-size: 1.4rem;
+}
+
+.priority-radio-buttons {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.plus-sign {
+    height: 1.4lh;
+    filter: invert(39%) sepia(0%) saturate(1%) hue-rotate(48deg) brightness(94%)
+        contrast(87%);
+    scale: 0.8;
+
+    background-image: url("./icons/plus.svg");
 }
 
 .todos {
-    padding: 0 3rem;
-
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -113,11 +170,13 @@ body {
     font-size: 2rem;
     padding: 0.6rem;
     border-radius: 0.5rem;
+    border: 2px solid rgb(134, 134, 134);
 
-    transition: all 0.5s ease;
+    transition: all 0.3s ease;
 }
 
-.todo:hover {
+.todo:hover,
+.add-todo:hover {
     background-color: rgb(239, 239, 239);
     cursor: pointer;
 }
@@ -184,10 +243,18 @@ body {
     filter: invert(39%) sepia(0%) saturate(1%) hue-rotate(48deg) brightness(94%)
         contrast(87%);
     scale: 0.8;
+
+    transition: all 0.2s ease;
+}
+
+.trash:hover,
+.arrow:hover {
+    filter: invert(39%) sepia(0%) saturate(1%) hue-rotate(48deg) brightness(0.1)
+        contrast(87%);
 }
 
 .details {
     width: 100%;
 
-    transition: all 0.5s ease;
+    /* transition: all 0.5s ease; */
 }
