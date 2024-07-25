@@ -154,6 +154,25 @@ form {
     background-image: url("./icons/plus.svg");
 }
 
+#submit-todo,
+#cancel-todo {
+    padding: 0.5rem 0;
+    border-radius: 0.5rem;
+    font-weight: 500;
+
+    transition: filter 0.3s ease;
+}
+
+#submit-todo {
+    background-color: rgb(209, 92, 14);
+    color: white;
+}
+
+#cancel-todo {
+    background-color: rgb(83, 83, 83);
+    color: white;
+}
+
 .todos {
     display: flex;
     flex-direction: column;
@@ -176,7 +195,7 @@ form {
 }
 
 .todo:hover,
-.add-todo:hover {
+.add-todo:not(.active):hover {
     background-color: rgb(239, 239, 239);
     cursor: pointer;
 }
@@ -232,8 +251,10 @@ form {
     background-color: rgb(249, 205, 205);
 }
 
-.checkbox:hover {
-    filter: brightness(0.9);
+.checkbox:hover,
+#cancel-todo:hover,
+#submit-todo:hover {
+    filter: brightness(1.1);
     cursor: pointer;
 }
 

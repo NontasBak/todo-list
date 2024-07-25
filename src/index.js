@@ -22,22 +22,15 @@ if (!localStorage.getItem("projectList")) {
 
 const display = new Display();
 display.updateSidebarProjects();
-display.updateMainScreen();
+display.showAddTodoButton();
+display.updateTodoList();
 
 const sidebarButtons = document.querySelectorAll(".button-sidebar");
 sidebarButtons.forEach((button) => {
     button.addEventListener("click", (e) => {
         display.updateActiveProject(e);
-        display.updateMainScreen(e.target.textContent);
+        display.updateTodoList(e.target.textContent);
     });
-});
-
-const addTodoButton = document.querySelector(".add-todo");
-addTodoButton.addEventListener("click", display.addTodoHandler);
-
-const todos = document.querySelectorAll(".todo");
-todos.forEach((todo) => {
-    todo.addEventListener("click", display.todoInputHandler);
 });
 
 // console.log(JSON.stringify(todo1));

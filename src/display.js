@@ -2,6 +2,7 @@ import Storage from "./storage.js";
 import Arrow from "./icons/arrow-down.svg";
 import Trash from "./icons/trash.svg";
 import Plus from "./icons/plus.svg";
+import Todo from "./todo.js";
 
 class Display {
     updateSidebarProjects = () => {
@@ -19,8 +20,8 @@ class Display {
         });
     };
 
-    updateMainScreen = (list = "All Projects") => {
-        this.showAddTodoButton();
+    updateTodoList = (list = "All Projects") => {
+        // this.showAddTodoButton();
 
         let todos = Storage.todos();
         const todosDOM = document.querySelector(".todos");
@@ -66,6 +67,11 @@ class Display {
             todoElement.appendChild(trash);
 
             todosDOM.appendChild(todoElement);
+        });
+
+        const todoElements = document.querySelectorAll(".todo");
+        todoElements.forEach((todo) => {
+            todo.addEventListener("click", this.todoInputHandler);
         });
     };
 
@@ -142,7 +148,7 @@ class Display {
         //Might need refactoring
         let projectList = Storage.projectList();
         Storage.populate(projectList, todos);
-        this.updateMainScreen();
+        this.updateTodoList();
     };
 
     todoInputHandler = (e) => {
@@ -155,7 +161,9 @@ class Display {
         }
     };
 
-    showAddTodoButton = () => {
+    showAddTodoButton = (event) => {
+        if (event) event.stopPropagation();
+
         const addTodoElement = document.querySelector(".add-todo");
         addTodoElement.innerHTML = "";
         addTodoElement.classList.remove("active");
@@ -168,35 +176,37 @@ class Display {
 
         addTodoElement.append(addTodoH5, plus);
         addTodoElement.addEventListener("click", this.addTodoHandler);
-    }
+    };
 
     addTodoHandler = (e) => {
-        const addTodoElement = document.querySelector(".add-todo");
-        addTodoElement.classList.toggle("active");
-        addTodoElement.removeEventListener("click", this.addTodoHandler);
+        //Weird bug
+        // if (e.target.id === "submit-todo" || e.target.id === "cancel-todo")
+        //     return;
 
-        if (!addTodoElement.classList.contains("active")) {
-            this.showAddTodoButton();
-            return;
-        }
+        const addTodoElement = document.querySelector(".add-todo");
+        addTodoElement.classList.add("active");
+        addTodoElement.removeEventListener("click", this.addTodoHandler);
 
         addTodoElement.innerHTML = "";
 
         const form = document.createElement("form");
         form.id = "new-todo-form";
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+        });
 
         const titleInput = document.createElement("input");
         titleInput.id = "new-todo-title";
         titleInput.type = "text";
         const titleInputLabel = document.createElement("label");
-        titleInputLabel.textContent = "Title";
+        titleInputLabel.textContent = "Title:";
         titleInputLabel.for = "new-todo-title";
 
         const descriptionInput = document.createElement("input");
         descriptionInput.id = "new-todo-description";
         descriptionInput.type = "text";
         const descriptionInputLabel = document.createElement("label");
-        descriptionInputLabel.textContent = "Description";
+        descriptionInputLabel.textContent = "Description:";
         descriptionInputLabel.for = "new-todo-description";
 
         const dueDateInput = document.createElement("input");
@@ -211,16 +221,21 @@ class Display {
         }
         dueDateInput.value = toDateInputValue(new Date());
         const dueDateInputLabel = document.createElement("label");
-        dueDateInputLabel.textContent = "Due Date";
+        dueDateInputLabel.textContent = "Due Date:";
         dueDateInputLabel.for = "new-todo-due-date";
 
         const priorityRadioButtonsDiv = document.createElement("div");
         priorityRadioButtonsDiv.classList.add("priority-radio-buttons");
+
+        const priorityLabel = document.createElement("label");
+        priorityLabel.textContent = "Priority:";
+
         const lowPriority = document.createElement("input");
         lowPriority.id = "low";
         lowPriority.type = "radio";
         lowPriority.name = "priority";
         lowPriority.value = "LOW";
+        lowPriority.checked = true;
         const mediumPriority = document.createElement("input");
         mediumPriority.id = "medium";
         mediumPriority.type = "radio";
@@ -241,7 +256,18 @@ class Display {
         const highPriorityLabel = document.createElement("label");
         highPriorityLabel.textContent = "High";
         highPriority.for = "high";
-        
+
+        const submitButton = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.id = "submit-todo";
+        submitButton.textContent = "Add Todo";
+        submitButton.addEventListener("click", this.submitAddTodoForm);
+
+        const cancelButton = document.createElement("button");
+        cancelButton.type = "button";
+        cancelButton.id = "cancel-todo";
+        cancelButton.textContent = "Cancel";
+        cancelButton.addEventListener("click", this.showAddTodoButton);
 
         priorityRadioButtonsDiv.append(
             lowPriority,
@@ -258,9 +284,35 @@ class Display {
             descriptionInput,
             dueDateInputLabel,
             dueDateInput,
-            priorityRadioButtonsDiv
+            priorityLabel,
+            priorityRadioButtonsDiv,
+            submitButton,
+            cancelButton
         );
         addTodoElement.appendChild(form);
+    };
+
+    submitAddTodoForm = (event) => {
+        event.preventDefault();
+        let title = document.querySelector("#new-todo-title").value;
+        let description = document.querySelector("#new-todo-description").value;
+        let dueDate = new Date(
+            document.querySelector("#new-todo-due-date").value
+        );
+        let priority = document.querySelector(
+            'input[name="priority"]:checked'
+        ).value;
+
+        let newTodo = new Todo(title, description, dueDate, priority);
+
+        let todos = Storage.todos();
+        todos.push(newTodo);
+
+        let projectList = Storage.projectList();
+        Storage.populate(projectList, todos);
+
+        this.showAddTodoButton(event);
+        this.updateTodoList();
     };
 }
 
