@@ -3,6 +3,8 @@ import Arrow from "./icons/arrow-down.svg";
 import Trash from "./icons/trash.svg";
 import Plus from "./icons/plus.svg";
 import Todo from "./todo.js";
+import Project from "./project.js";
+import { de } from "date-fns/locale";
 
 class Display {
     updateSidebarProjects = () => {
@@ -13,25 +15,66 @@ class Display {
         // console.log(projectList);
         projectList.forEach((project) => {
             let projectElement = document.createElement("li");
-            projectElement.classList.add("button-sidebar");
-            projectElement.textContent = project.name;
+            projectElement.classList.add("button-sidebar", "project");
+            projectElement.addEventListener("click", this.projectInputHandler);
+
+            const projectName = document.createElement("p");
+            projectName.classList.add("project-name");
+            projectName.textContent = project.name;
+
+            const deleteButton = document.createElement("img");
+            deleteButton.classList.add("trash");
+            deleteButton.setAttribute("src", Trash);
+            // deleteButton.addEventListener("click", this.deleteProject);
+
+            projectElement.append(projectName, deleteButton);
 
             sidebarProjects.appendChild(projectElement);
         });
+
+        const defaultSidebarButtons = document.querySelectorAll(
+            ".container .button-sidebar"
+        );
+        defaultSidebarButtons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                this.updateTodoList(e.target.textContent);
+                this.deselectActiveProject();
+                this.updateDefaultActiveProject(e.target);
+                this.showAddTodoButton()
+            });
+        });
     };
 
-    updateTodoList = (list = "All Projects") => {
-        // this.showAddTodoButton();
+    updateTodoList = (projectName = "All Projects") => {
+        if (projectName.includes("→ ")) return; //Already selected
 
         let todos = Storage.todos();
         const todosDOM = document.querySelector(".todos");
         todosDOM.innerHTML = "";
 
-        // console.log(todos);
         const listTitle = document.querySelector(".main h3");
-        listTitle.textContent = list;
+        listTitle.textContent = projectName;
 
-        todos.forEach((todo, index) => {
+        let todosToDisplay = null;
+        switch (projectName) {
+            case "All Projects":
+                todosToDisplay = todos;
+                break;
+            case "Today":
+                //TODO
+                todosToDisplay = todos;
+                break;
+            case "This Week":
+                //TODO
+                todosToDisplay = todos;
+                break;
+            default:
+                todosToDisplay = todos.filter((todo) => {
+                    return todo.projectName === projectName;
+                });
+        }
+
+        todosToDisplay.forEach((todo, index) => {
             let todoElement = document.createElement("li");
             todoElement.classList.add("todo");
             todoElement.dataset.index = index;
@@ -75,12 +118,34 @@ class Display {
         });
     };
 
-    updateActiveProject = (button) => {
+    deselectActiveProject = () => {
         const previousActiveButton = document.querySelector(".sidebar .active");
-        if (previousActiveButton)
-            previousActiveButton.classList.remove("active");
+        previousActiveButton.classList.remove("active");
 
-        button.target.classList.add("active");
+        if (previousActiveButton.classList.contains("default")) {
+            previousActiveButton.textContent =
+                previousActiveButton.textContent.slice(2); //Remove "→ "
+        } else {
+            previousActiveButton.querySelector(".project-name").textContent =
+                previousActiveButton
+                    .querySelector(".project-name")
+                    .textContent.slice(2);
+        }
+    };
+
+    updateDefaultActiveProject = (project) => {
+        project.textContent = "→ " + project.textContent;
+        project.classList.add("active");
+    };
+
+    updateActiveProject = (project) => {
+        let projectName = project
+            .closest(".button-sidebar")
+            .querySelector(".project-name");
+
+        projectName.textContent = "→ " + projectName.textContent;
+
+        project.closest(".button-sidebar").classList.add("active");
     };
 
     toggleTodoDetails = (todo) => {
@@ -158,6 +223,17 @@ class Display {
             this.deleteTodo(e.target);
         } else {
             this.toggleTodoDetails(e.target);
+        }
+    };
+
+    projectInputHandler = (e) => {
+        if (e.target.classList.contains("trash")) {
+            this.deleteProject(e);
+        } else {
+            this.updateTodoList(e.target.textContent);
+            this.deselectActiveProject();
+            this.updateActiveProject(e.target);
+            this.showAddTodoButton()
         }
     };
 
@@ -313,6 +389,95 @@ class Display {
 
         this.showAddTodoButton(event);
         this.updateTodoList();
+    };
+
+    showAddProjectButton = (event) => {
+        if (event) event.stopPropagation();
+
+        const createProjectDiv = document.querySelector(".create-project");
+        createProjectDiv.innerHTML = "";
+
+        const createProjectH5 = document.createElement("h5");
+        createProjectH5.textContent = "Create Project";
+
+        const plus = document.createElement("img");
+        plus.classList.add("plus-sign");
+        plus.setAttribute("src", Plus);
+
+        createProjectDiv.append(createProjectH5, plus);
+        document.querySelector(".projects").appendChild(createProjectDiv);
+
+        createProjectDiv.addEventListener("click", this.addProjectHandler);
+    };
+
+    addProjectHandler = (event) => {
+        const createProjectDiv = document.querySelector(".create-project");
+        createProjectDiv.removeEventListener("click", this.addProjectHandler);
+
+        createProjectDiv.innerHTML = "";
+
+        const form = document.createElement("form");
+        form.id = "new-project-form";
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+        });
+
+        const nameInput = document.createElement("input");
+        nameInput.id = "new-project-name";
+        nameInput.type = "text";
+        const nameInputLabel = document.createElement("label");
+        nameInputLabel.textContent = "Name:";
+        nameInputLabel.for = "new-project-name";
+
+        const submitButton = document.createElement("button");
+        submitButton.type = "submit";
+        submitButton.id = "submit-project";
+        submitButton.textContent = "Create Project";
+        submitButton.addEventListener("click", this.submitAddProjectForm);
+
+        const cancelButton = document.createElement("button");
+        cancelButton.type = "button";
+        cancelButton.id = "cancel-project";
+        cancelButton.textContent = "Cancel";
+        cancelButton.addEventListener("click", this.showAddProjectButton);
+
+        form.append(nameInputLabel, nameInput, submitButton, cancelButton);
+        createProjectDiv.appendChild(form);
+    };
+
+    submitAddProjectForm = (event) => {
+        event.preventDefault();
+
+        let name = document.querySelector("#new-project-name").value;
+
+        let project = Storage.projectList();
+        project.push(new Project(name));
+
+        let todos = Storage.todos();
+        Storage.populate(project, todos);
+
+        this.showAddProjectButton(event);
+        this.updateSidebarProjects();
+    };
+
+    deleteProject = (e) => {
+        let projectName = e.target
+            .closest(".button-sidebar")
+            .querySelector(".project-name").textContent;
+
+        let projectList = Storage.projectList();
+        console.log(projectList);
+        projectList = projectList.filter((project) => {
+            return project.name !== projectName;
+        });
+
+        let todos = Storage.todos();
+        todos = todos.filter((todo) => {
+            return todo.projectName !== projectName;
+        });
+
+        Storage.populate(projectList, todos);
+        this.updateSidebarProjects();
     };
 }
 

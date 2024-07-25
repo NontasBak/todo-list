@@ -1,4 +1,5 @@
 import Todo from "./todo.js";
+import Project from "./project.js";
 
 class Storage {
     static populate = (projectList, todos) => {
@@ -7,7 +8,12 @@ class Storage {
     };
 
     static projectList = () => {
-        return JSON.parse(localStorage.getItem("projectList"));
+        let projects = JSON.parse(localStorage.getItem("projectList"));
+
+        projects = projects.map((project) => {
+            return new Project(project.name, project.todos);
+        });
+        return projects;
     };
 
     static todos = () => {
@@ -19,6 +25,7 @@ class Storage {
                 todo.description,
                 new Date(todo._dueDate),
                 todo._priority,
+                todo.projectName,
                 todo.complete
             );
         });

@@ -1,9 +1,17 @@
 class Todo {
-    constructor(title, description, dueDate, priority, complete = false) {
+    constructor(
+        title,
+        description,
+        dueDate,
+        priority,
+        projectName = null,
+        complete = false,
+    ) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
         this.priority = priority;
+        this.projectName = projectName; //project that this todo is part of
         this.complete = complete;
     }
 

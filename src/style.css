@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: "Raleway", sans-serif;
     font-optical-sizing: auto;
@@ -36,6 +40,9 @@ body {
     font-weight: 500;
     color: rgb(96, 49, 37);
     padding: 0 0.5rem;
+    padding-bottom: 0.5rem;
+
+    border-bottom: 3px solid rgb(96, 49, 37);
 }
 
 .sidebar .projects {
@@ -64,13 +71,43 @@ body {
     border-radius: 0.3rem;
 }
 
-.sidebar .active {
-    background-color: rgb(201, 201, 201);
-    border-radius: 0.3rem;
+/* .sidebar .active::before {
+    content: "→ ";
+} */
+
+.create-project {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    align-self: flex-start;
+
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    border: 3px solid rgb(79, 79, 79);
+    border-radius: 0.5rem;
+
+    transition: all 0.3s ease;
 }
 
-.sidebar .active::before {
-    content: "→ ";
+.create-project:hover {
+    cursor: pointer;
+    background-color: rgb(201, 201, 201);
+}
+
+.project {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button-sidebar {
+    
+    transition: background-color 0.3s ease;
+}
+
+.button-sidebar.active {
+    background-color: rgb(201, 201, 201);
+    border-radius: 0.3rem;
 }
 
 /* 
