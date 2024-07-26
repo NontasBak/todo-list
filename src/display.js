@@ -153,12 +153,12 @@ class Display {
     };
 
     toggleTodoDetails = (todo) => {
-        if (
-            todo.classList.contains("checkbox") ||
-            todo.classList.contains("trash")
-        ) {
-            return;
-        }
+        // if (
+        //     todo.classList.contains("checkbox") ||
+        //     todo.classList.contains("trash")
+        // ) {
+        //     return;
+        // }
 
         //Make sure the todo element is selected (and not the children)
         if (!todo.classList.contains("todo")) {
@@ -217,7 +217,6 @@ class Display {
         //Might need refactoring
         let projectList = Storage.projectList();
         Storage.populate(projectList, todos);
-        this.updateTodoList();
     };
 
     todoInputHandler = (e) => {
@@ -225,6 +224,7 @@ class Display {
             this.toggleComplete(e.target);
         } else if (e.target.classList.contains("trash")) {
             this.deleteTodo(e.target);
+            this.updateTodoList(this.getActiveProjectName());
         } else {
             this.toggleTodoDetails(e.target);
         }
@@ -476,15 +476,8 @@ class Display {
         let todos = Storage.todos();
         Storage.populate(project, todos);
 
-        //For keeping the active project selected
-        let activeProjectName = document
-            .querySelector(".button-sidebar.active")
-            .querySelector(".project-name");
-        if (activeProjectName)
-            activeProjectName = activeProjectName.textContent.slice(2);
-
         this.showAddProjectButton(event);
-        this.updateSidebarProjects(activeProjectName);
+        this.updateSidebarProjects(this.getActiveProjectName());
     };
 
     deleteProject = (e) => {
@@ -521,13 +514,16 @@ class Display {
             this.updateDefaultActiveProject(document.querySelector(".default"));
         }
 
-        //Keep the active project selected
-        let activeProjectName = document
-            .querySelector(".button-sidebar.active")
-            .querySelector(".project-name");
-        if (activeProjectName)
-            activeProjectName = activeProjectName.textContent.slice(2);
-        this.updateSidebarProjects(activeProjectName);
+        this.updateSidebarProjects(this.getActiveProjectName());
+    };
+
+    getActiveProjectName = () => {
+        if (document.querySelector(".button-sidebar.active .project-name"))
+            return document
+                .querySelector(".button-sidebar.active .project-name")
+                .textContent.slice(2);
+        else
+            return document.querySelector(".button-sidebar.active").textContent;
     };
 }
 
