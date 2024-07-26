@@ -10,7 +10,8 @@
     "build:prod": "webpack --mode=production --node-env=production",
     "watch": "webpack --watch",
     "start": "webpack serve --open",
-    "serve": "webpack serve"
+    "serve": "webpack serve",
+    "deploy": "git subtree push --prefix dist origin gh-pages"
   },
   "keywords": [],
   "author": "",
