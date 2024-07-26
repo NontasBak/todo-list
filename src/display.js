@@ -396,6 +396,7 @@ class Display {
 
         const createProjectDiv = document.querySelector(".create-project");
         createProjectDiv.innerHTML = "";
+        createProjectDiv.classList.remove("active");
 
         const createProjectH5 = document.createElement("h5");
         createProjectH5.textContent = "Create Project";
@@ -405,13 +406,13 @@ class Display {
         plus.setAttribute("src", Plus);
 
         createProjectDiv.append(createProjectH5, plus);
-        document.querySelector(".projects").appendChild(createProjectDiv);
 
         createProjectDiv.addEventListener("click", this.addProjectHandler);
     };
 
     addProjectHandler = (event) => {
         const createProjectDiv = document.querySelector(".create-project");
+        createProjectDiv.classList.add("active");
         createProjectDiv.removeEventListener("click", this.addProjectHandler);
 
         createProjectDiv.innerHTML = "";
