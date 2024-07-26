@@ -7,7 +7,7 @@ import Project from "./project.js";
 import { de } from "date-fns/locale";
 
 class Display {
-    updateSidebarProjects = () => {
+    updateSidebarProjects = (activeProjectName = null) => {
         let projectList = Storage.projectList();
         const sidebarProjects = document.querySelector(".projectList");
         sidebarProjects.innerHTML = "";
@@ -25,11 +25,15 @@ class Display {
             const deleteButton = document.createElement("img");
             deleteButton.classList.add("trash");
             deleteButton.setAttribute("src", Trash);
-            // deleteButton.addEventListener("click", this.deleteProject);
 
             projectElement.append(projectName, deleteButton);
 
             sidebarProjects.appendChild(projectElement);
+
+            //In case there was already an active project that we want to keep
+            if (activeProjectName === project.name) {
+                this.updateActiveProject(projectElement);
+            }
         });
 
         const defaultSidebarButtons = document.querySelectorAll(
@@ -40,7 +44,7 @@ class Display {
                 this.updateTodoList(e.target.textContent);
                 this.deselectActiveProject();
                 this.updateDefaultActiveProject(e.target);
-                this.showAddTodoButton()
+                this.showAddTodoButton();
             });
         });
     };
@@ -233,7 +237,7 @@ class Display {
             this.updateTodoList(e.target.textContent);
             this.deselectActiveProject();
             this.updateActiveProject(e.target);
-            this.showAddTodoButton()
+            this.showAddTodoButton();
         }
     };
 
@@ -379,7 +383,22 @@ class Display {
             'input[name="priority"]:checked'
         ).value;
 
-        let newTodo = new Todo(title, description, dueDate, priority);
+        let newTodo;
+        let activeProject = document.querySelector(".button-sidebar.active");
+        let projectName =
+            activeProject.querySelector(".project-name").textContent;
+        if (!projectName) {
+            newTodo = new Todo(title, description, dueDate, priority);
+        } else {
+            projectName = projectName.slice(2);
+            newTodo = new Todo(
+                title,
+                description,
+                dueDate,
+                priority,
+                projectName
+            );
+        }
 
         let todos = Storage.todos();
         todos.push(newTodo);
@@ -388,7 +407,7 @@ class Display {
         Storage.populate(projectList, todos);
 
         this.showAddTodoButton(event);
-        this.updateTodoList();
+        this.updateTodoList(projectName);
     };
 
     showAddProjectButton = (event) => {
@@ -457,17 +476,35 @@ class Display {
         let todos = Storage.todos();
         Storage.populate(project, todos);
 
+        //For keeping the active project selected
+        let activeProjectName = document
+            .querySelector(".button-sidebar.active")
+            .querySelector(".project-name");
+        if (activeProjectName)
+            activeProjectName = activeProjectName.textContent.slice(2);
+
         this.showAddProjectButton(event);
-        this.updateSidebarProjects();
+        this.updateSidebarProjects(activeProjectName);
     };
 
     deleteProject = (e) => {
-        let projectName = e.target
+        let projectName;
+        let isProjectSelected = e.target
             .closest(".button-sidebar")
-            .querySelector(".project-name").textContent;
+            .classList.contains("active");
+
+        if (isProjectSelected) {
+            projectName = e.target
+                .closest(".button-sidebar")
+                .querySelector(".project-name")
+                .textContent.slice(2);
+        } else {
+            projectName = e.target
+                .closest(".button-sidebar")
+                .querySelector(".project-name").textContent;
+        }
 
         let projectList = Storage.projectList();
-        console.log(projectList);
         projectList = projectList.filter((project) => {
             return project.name !== projectName;
         });
@@ -478,7 +515,19 @@ class Display {
         });
 
         Storage.populate(projectList, todos);
-        this.updateSidebarProjects();
+
+        if (isProjectSelected) {
+            this.updateTodoList("All Projects");
+            this.updateDefaultActiveProject(document.querySelector(".default"));
+        }
+
+        //Keep the active project selected
+        let activeProjectName = document
+            .querySelector(".button-sidebar.active")
+            .querySelector(".project-name");
+        if (activeProjectName)
+            activeProjectName = activeProjectName.textContent.slice(2);
+        this.updateSidebarProjects(activeProjectName);
     };
 }
 
