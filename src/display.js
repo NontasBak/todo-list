@@ -4,7 +4,7 @@ import Trash from "./icons/trash.svg";
 import Plus from "./icons/plus.svg";
 import Todo from "./todo.js";
 import Project from "./project.js";
-import { de } from "date-fns/locale";
+import { isThisWeek, isToday } from "date-fns";
 
 class Display {
     updateSidebarProjects = (activeProjectName = null) => {
@@ -65,12 +65,12 @@ class Display {
                 todosToDisplay = todos;
                 break;
             case "Today":
-                //TODO
-                todosToDisplay = todos;
+                todosToDisplay = todos.filter((todo) => isToday(todo.dueDate));
                 break;
             case "This Week":
-                //TODO
-                todosToDisplay = todos;
+                todosToDisplay = todos.filter((todo) =>
+                    isThisWeek(todo.dueDate)
+                );
                 break;
             default:
                 todosToDisplay = todos.filter((todo) => {
@@ -384,19 +384,20 @@ class Display {
         ).value;
 
         let newTodo;
-        let activeProject = document.querySelector(".button-sidebar.active");
-        let projectName =
-            activeProject.querySelector(".project-name").textContent;
-        if (!projectName) {
+        let activeProjectName = this.getActiveProjectName();
+        if (
+            activeProjectName === "All Projects" ||
+            activeProjectName === "Today" ||
+            activeProjectName === "This Week"
+        ) {
             newTodo = new Todo(title, description, dueDate, priority);
         } else {
-            projectName = projectName.slice(2);
             newTodo = new Todo(
                 title,
                 description,
                 dueDate,
                 priority,
-                projectName
+                activeProjectName
             );
         }
 
@@ -407,7 +408,7 @@ class Display {
         Storage.populate(projectList, todos);
 
         this.showAddTodoButton(event);
-        this.updateTodoList(projectName);
+        this.updateTodoList(activeProjectName);
     };
 
     showAddProjectButton = (event) => {
