@@ -4,12 +4,34 @@ import Todo from "./todo.js";
 import Project from "./project.js";
 import Storage from "./storage.js";
 import Display from "./display.js";
-// import date from "date-fns";
+import { add } from "date-fns";
 
 if (!localStorage.getItem("projectList")) {
-    let todo1 = new Todo("Title1", "Desc1", new Date(1999, 1, 10), "LOW", "House Chores");
-    let todo2 = new Todo("Title2", "Desc2", new Date(1999, 0, 12), "MEDIUM", "Work");
-    let todo3 = new Todo("Title3", "Desc3", new Date(2003, 5, 27), "HIGH", "House Chores");
+    let todo1 = new Todo(
+        "Cleanup dust 🧹",
+        "Make sure to clean all the edges!",
+        add(new Date(), {
+            days: 10,
+        }),
+        "LOW",
+        "House Chores"
+    );
+    let todo2 = new Todo(
+        "Email boss 💻",
+        "Boss will be angry if you're too late",
+        add(new Date(), {
+            days: 3,
+        }),
+        "MEDIUM",
+        "Work"
+    );
+    let todo3 = new Todo(
+        "Laundry 👕",
+        "Vacation soon so rush ASAP",
+        new Date(),
+        "HIGH",
+        "House Chores"
+    );
     let project1 = new Project("House Chores");
     let project2 = new Project("Work");
 
@@ -17,8 +39,6 @@ if (!localStorage.getItem("projectList")) {
 } else {
     let projectList = Storage.projectList();
     let todos = Storage.todos();
-
-    // console.log(todos);
 }
 
 const display = new Display();
@@ -26,5 +46,3 @@ display.updateSidebarProjects();
 display.showAddProjectButton();
 display.showAddTodoButton();
 display.updateTodoList();
-
-// console.log(JSON.stringify(todo1));
